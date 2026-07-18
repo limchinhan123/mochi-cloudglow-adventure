@@ -131,6 +131,12 @@ Create a production build:
 npm run build
 ```
 
+## Contributing without changing the original
+
+This repository is the canonical version maintained by `@limchinhan123`. Contributors do not need direct write access: **fork the repository, create a branch in the fork, then open a pull request into `main`**.
+
+The owner reviews every proposed change before it can become part of the original game. See [CONTRIBUTING.md](CONTRIBUTING.md) for the child-safety, privacy, testing and visual-quality requirements.
+
 ## Quality standard
 
 A technically functional build is not enough. Every realm, learning interaction, control, camera path, and responsive layout is reviewed against [VISUAL_ACCEPTANCE.md](VISUAL_ACCEPTANCE.md).
