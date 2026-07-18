@@ -1,0 +1,114 @@
+:root {
+  color-scheme: dark;
+  font-family: "Avenir Next", Avenir, "Nunito Sans", system-ui, sans-serif;
+  background: #123f46;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+body { overscroll-behavior: none; }
+button { font: inherit; }
+
+.game-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  isolation: isolate;
+  background: #123f46;
+  touch-action: none;
+  user-select: none;
+}
+
+.scene-canvas {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.visual-grain {
+  display: none;
+}
+
+.visual-vignette {
+  pointer-events: none;
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(12, 52, 50, 0.05), transparent 24%, transparent 76%, rgba(87, 52, 79, 0.035)),
+    radial-gradient(ellipse at center, transparent 66%, rgba(24, 55, 62, 0.07) 100%);
+}
+
+.orientation-note {
+  display: none;
+}
+
+.scene-loading {
+  position: absolute;
+  z-index: 5;
+  inset: auto 50% 10%;
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  transform: translateX(-50%);
+  color: rgba(234, 246, 244, 0.84);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.scene-loading__petal {
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 70% 18% 70% 18%;
+  background: linear-gradient(135deg, #f2ce72, #ed7fb2);
+  box-shadow: 0 0 1.6rem rgba(242, 206, 114, 0.48);
+  animation: cloudglow-pulse 1.55s ease-in-out infinite;
+}
+
+@keyframes cloudglow-pulse {
+  0%, 100% { transform: rotate(0deg) scale(0.9); opacity: 0.7; }
+  50% { transform: rotate(90deg) scale(1.08); opacity: 1; }
+}
+
+.boot-screen {
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 68% 22%, rgba(243, 197, 173, 0.75), transparent 31%),
+    linear-gradient(145deg, #123f46 5%, #2e7065 48%, #78619d 100%);
+}
+
+@media (orientation: portrait) and (max-width: 720px) {
+  .orientation-note {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    z-index: 30;
+    inset: 0;
+    padding: 12vw;
+    color: #34233f;
+    text-align: center;
+    font-weight: 700;
+    font-size: clamp(1.1rem, 6vw, 1.55rem);
+    letter-spacing: -0.02em;
+    background:
+      radial-gradient(circle at 50% 32%, rgba(234, 246, 244, 0.96), rgba(243, 197, 173, 0.92) 64%, rgba(120, 97, 157, 0.94));
+  }
+
+  .orientation-note::before {
+    content: "↻";
+    display: block;
+    margin-bottom: 1rem;
+    font-size: 3rem;
+    font-weight: 400;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visual-grain { display: none; }
+}

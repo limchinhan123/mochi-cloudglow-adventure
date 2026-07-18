@@ -1,0 +1,17 @@
+node_modules/
+dist/
+qa/output/
+qa/screenshots/
+coverage/
+playwright-report/
+test-results/
+.private/
+.env
+.env.*
+!.env.example
+# Local capture scratch files; README media uses the matching .jpg assets.
+docs/media/learning-journeys.png
+docs/media/mochi-learning-adventure-hero.png
+.DS_Store
+*.log
+.vercel
