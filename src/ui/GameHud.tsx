@@ -5,7 +5,14 @@ import type {
   ReactNode,
 } from 'react'
 import type { CloudglowGame, CloudglowGuidance } from '../game/useCloudglowGame'
-import { SPEED_MODES, ZONES, ZONE_COUNT, type LearningMode, type SpeedMode } from '../game/worldConfig'
+import {
+  HOME_MEADOW_REVEAL_START,
+  SPEED_MODES,
+  ZONES,
+  ZONE_COUNT,
+  type LearningMode,
+  type SpeedMode,
+} from '../game/worldConfig'
 import { ShapeRecap } from './ShapeRecap'
 import { ShapeTrailPrompt } from './ShapeTrailPrompt'
 import './ui.css'
@@ -319,7 +326,8 @@ function AudioSettings({ game }: { game: CloudglowGame }) {
 const COUNT_WORDS = ['Three discoveries ahead', 'One found', 'Two found', 'Realm complete!'] as const
 
 export function GameHud({ game, className = '' }: GameHudProps) {
-  const overlayVisible = game.phase !== 'playing'
+  const overlayVisible = game.phase === 'ready' || game.phase === 'paused' || game.phase === 'celebrating'
+  const homecomingVisible = game.progress >= HOME_MEADOW_REVEAL_START
   const hudClassName = ['game-hud', overlayVisible ? 'game-hud--covered' : '', className]
     .filter(Boolean)
     .join(' ')
@@ -333,11 +341,11 @@ export function GameHud({ game, className = '' }: GameHudProps) {
   return (
     <div className={hudClassName} data-phase={game.phase} data-zone={game.zone.id}>
       <header className="hud-toprail">
-        <div className="place-plaque" aria-label={game.zone.name}>
+        <div className="place-plaque" aria-label={homecomingVisible ? 'Mochi’s Home Meadow' : game.zone.name}>
           <span className="place-plaque__crest"><LeafMark /></span>
           <span className="place-plaque__copy">
-            <small>{game.zone.shortName}</small>
-            <strong>{game.zone.name}</strong>
+            <small>{homecomingVisible ? 'Homecoming' : game.zone.shortName}</small>
+            <strong>{homecomingVisible ? 'Mochi’s Home Meadow' : game.zone.name}</strong>
             <span className="zone-trail" aria-label={`Realm ${ZONES.findIndex((zone) => zone.id === game.zone.id) + 1} of ${ZONE_COUNT}`}>
               {ZONES.map((zone) => (
                 <i className={zone.id === game.zone.id ? 'is-current' : ''} key={zone.id} />
@@ -484,9 +492,9 @@ export function GameHud({ game, className = '' }: GameHudProps) {
 
             {game.phase === 'celebrating' && (
               <>
-                <span className="storybook-card__eyebrow">The whole {game.learningModeLabel} is glowing</span>
+                <span className="storybook-card__eyebrow">Mochi made it home · the whole {game.learningModeLabel} is glowing</span>
                 <div className="storybook-card__emblem storybook-card__emblem--glowing"><FlowerMark /></div>
-                <h1>All twelve realms<br />are glowing!</h1>
+                <h1>Home in the<br />green meadow!</h1>
                 <p>You solved <strong>{game.collected} discoveries</strong> across <strong>{game.flowersGrown} magical realms</strong>.</p>
                 <ShapeRecap challenges={game.shapeTrail.challenges} completedChallengeIds={game.completedChallengeIds} />
                 <button className="storybook-primary" onClick={game.restart} type="button">

@@ -141,6 +141,9 @@ export const ZONE_COUNT = ZONES.length
 export const ZONE_IDS: readonly ZoneId[] = ZONES.map((zone) => zone.id)
 export const ZONE_TRANSITIONS: readonly number[] = ZONES.slice(1).map((zone) => zone.start)
 
+/** The playable endpoint leaves a tiny curve guard-band for stable tangents. */
+export const ROUTE_END_PROGRESS = 0.995
+
 export const SPEED_MODES = {
   breeze: {
     id: 'breeze', name: 'Soft Breeze', description: 'Gentle, roomy and easy to explore', multiplier: 0.95,
@@ -202,15 +205,16 @@ const OBSTACLE_KINDS: readonly ObstacleKind[] = [
 ]
 const OBSTACLE_LANES: readonly CloudglowLane[] = [1, -1, 0, 1, -1, 0, 1, -1, 1, -1, 0, 1]
 
-export const WORLD_OBSTACLES: readonly ObstacleStop[] = ZONES.flatMap((zone, zoneIndex) =>
-  ([0.37, 0.66] as const).map((local, localIndex) => ({
+export const WORLD_OBSTACLES: readonly ObstacleStop[] = ZONES.flatMap((zone, zoneIndex) => {
+  const localStops = zone.id === 'storybook' ? ([0.22, 0.42] as const) : ([0.37, 0.66] as const)
+  return localStops.map((local, localIndex) => ({
     id: `${zone.id}-${localIndex ? 'trail-friend' : 'path-friend'}`,
     progress: zone.start + (zone.end - zone.start) * local,
     lane: OBSTACLE_LANES[(zoneIndex * 2 + localIndex) % OBSTACLE_LANES.length],
     zoneId: zone.id,
     kind: OBSTACLE_KINDS[(zoneIndex * 2 + localIndex) % OBSTACLE_KINDS.length],
-  })),
-)
+  }))
+})
 
 export function getZone(progress: number): ZoneDefinition {
   const clamped = Math.min(0.999_999, Math.max(0, progress))
@@ -234,3 +238,8 @@ export function zoneLocalToWorld(zoneId: ZoneId, localProgress: number): number 
   const zone = getZoneById(zoneId)
   return zone.start + Math.min(1, Math.max(0, localProgress)) * (zone.end - zone.start)
 }
+
+/** Storybook's learning finishes before Rae crests the long homeward hill. */
+export const HOMEWARD_DESCENT_START = zoneLocalToWorld('storybook', 0.54)
+export const HOME_MEADOW_REVEAL_START = zoneLocalToWorld('storybook', 0.66)
+export const HOME_MEADOW_LANDING_START = zoneLocalToWorld('storybook', 0.82)

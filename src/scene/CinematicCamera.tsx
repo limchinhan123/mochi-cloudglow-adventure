@@ -1,7 +1,12 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef, type MutableRefObject } from 'react'
 import * as THREE from 'three'
-import { CLOUDLIFT_ROUTE, LANE_WIDTH, ROUTE_LENGTH, sampleRouteFrame } from './route'
+import {
+  HOME_MEADOW_LANDING_START,
+  HOMEWARD_DESCENT_START,
+  ROUTE_END_PROGRESS,
+} from '../game/worldConfig'
+import { LANE_WIDTH, sampleRouteAhead, sampleRouteFrame } from './route'
 import type { SkyReachPose } from './SkyReachDirector'
 
 type CinematicCameraProps = {
@@ -14,6 +19,8 @@ type CinematicCameraProps = {
 const desiredPosition = new THREE.Vector3()
 const desiredTarget = new THREE.Vector3()
 const tangentTarget = new THREE.Vector3()
+const cameraUp = new THREE.Vector3()
+const WORLD_UP = new THREE.Vector3(0, 1, 0)
 const lookMatrix = new THREE.Matrix4()
 const desiredQuaternion = new THREE.Quaternion()
 
@@ -36,15 +43,21 @@ export function CinematicCamera({
 
   useFrame((_, delta) => {
     const frame = sampleRouteFrame(progress)
-    const lookProgress = THREE.MathUtils.clamp(
-      progress + LOOK_AHEAD_WORLD_UNITS / ROUTE_LENGTH,
-      0,
-      0.995,
+    const descentAmount = THREE.MathUtils.smoothstep(
+      progress,
+      HOMEWARD_DESCENT_START,
+      HOME_MEADOW_LANDING_START,
     )
-    CLOUDLIFT_ROUTE.getPointAt(lookProgress, desiredTarget)
+    const landingAmount = THREE.MathUtils.smoothstep(
+      progress,
+      HOME_MEADOW_LANDING_START,
+      ROUTE_END_PROGRESS,
+    )
+    const lookAhead = LOOK_AHEAD_WORLD_UNITS + descentAmount * 9
+    sampleRouteAhead(progress, lookAhead, desiredTarget)
     tangentTarget
       .copy(frame.position)
-      .addScaledVector(frame.tangent, LOOK_AHEAD_WORLD_UNITS)
+      .addScaledVector(frame.tangent, lookAhead)
       .lerp(desiredTarget, CURVE_ANTICIPATION)
     desiredTarget.copy(tangentTarget)
     const reachCamera = skyReachPoseRef?.current.camera ?? 0
@@ -57,25 +70,30 @@ export function CinematicCamera({
       Math.min(delta, 1 / 20),
     )
     const laneOffset = smoothedLane.current * LANE_WIDTH * (1 - reachCamera * 0.35)
+    cameraUp
+      .copy(frame.up)
+      .lerp(WORLD_UP, descentAmount * 0.78 + landingAmount * 0.12)
+      .normalize()
 
     desiredPosition
       .copy(frame.position)
-      .addScaledVector(frame.tangent, -9.2 - reachDolly)
-      .addScaledVector(frame.up, (compact ? 5.7 : 4.85) + reachCamera * 0.9)
+      .addScaledVector(frame.tangent, -9.2 - reachDolly - descentAmount * 2.15)
+      .addScaledVector(cameraUp, (compact ? 5.7 : 4.85) + reachCamera * 0.9 + descentAmount * 1.3)
       .addScaledVector(frame.right, laneOffset * CAMERA_LANE_FOLLOW)
 
     desiredTarget
-      .addScaledVector(frame.up, 1.5 + reachCamera * 2.6)
+      .addScaledVector(cameraUp, 1.5 + reachCamera * 2.6 + landingAmount * 0.35)
+      .addScaledVector(WORLD_UP, descentAmount * 2.7 - landingAmount * 1.4)
       .addScaledVector(frame.right, laneOffset * TARGET_LANE_FOLLOW)
     const positionAlpha = 1 - Math.exp(-delta / (paused ? 0.55 : 0.28 - reachCamera * 0.05))
     const rotationAlpha = 1 - Math.exp(-delta / (0.36 - reachCamera * 0.06))
     camera.position.lerp(desiredPosition, positionAlpha)
     smoothedTarget.lerp(desiredTarget, rotationAlpha)
 
-    lookMatrix.lookAt(camera.position, smoothedTarget, frame.up)
+    lookMatrix.lookAt(camera.position, smoothedTarget, cameraUp)
     desiredQuaternion.setFromRotationMatrix(lookMatrix)
     camera.quaternion.slerp(desiredQuaternion, rotationAlpha)
-    camera.up.lerp(frame.up, Math.min(1, delta * 2.4)).normalize()
+    camera.up.lerp(cameraUp, Math.min(1, delta * 2.4)).normalize()
   }, -20)
 
   return null

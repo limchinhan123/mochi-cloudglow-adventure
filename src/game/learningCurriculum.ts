@@ -73,6 +73,7 @@ export interface LearningJourney {
 }
 
 const CHALLENGE_LOCAL_PROGRESS = [0.22, 0.5, 0.8] as const
+const STORYBOOK_CHALLENGE_LOCAL_PROGRESS = [0.14, 0.31, 0.48] as const
 const LANES = [-1, 0, 1] as const
 const ORDER_LABELS = ['one', 'two', 'three'] as const
 const ALL_SHAPES = Object.keys(SHAPE_DEFINITIONS) as ShapeId[]
@@ -166,6 +167,9 @@ export function buildLearningJourney(mode: LearningMode, seed = 0): LearningJour
 
   ZONES.forEach((zone, zoneIndex) => {
     const kind = lessonKinds[zoneIndex]
+    const challengeProgress = zone.id === 'storybook'
+      ? STORYBOOK_CHALLENGE_LOCAL_PROGRESS
+      : CHALLENGE_LOCAL_PROGRESS
     lessonKindsByZone[zone.id] = kind
 
     if (kind === 'shape') {
@@ -177,7 +181,7 @@ export function buildLearningJourney(mode: LearningMode, seed = 0): LearningJour
         const order = (orderIndex + 1) as 1 | 2 | 3
         challenges.push({
           id: `${zone.id}-${order}-shape`,
-          progress: zoneLocalToWorld(zone.id, CHALLENGE_LOCAL_PROGRESS[orderIndex]),
+          progress: zoneLocalToWorld(zone.id, challengeProgress[orderIndex]),
           zoneId: zone.id,
           order,
           kind: 'shape',
@@ -197,7 +201,7 @@ export function buildLearningJourney(mode: LearningMode, seed = 0): LearningJour
       const problem = makeMathProblem(operator, maximum, random)
       challenges.push({
         id: `${zone.id}-${order}-math`,
-        progress: zoneLocalToWorld(zone.id, CHALLENGE_LOCAL_PROGRESS[orderIndex]),
+        progress: zoneLocalToWorld(zone.id, challengeProgress[orderIndex]),
         zoneId: zone.id,
         order,
         kind: 'math',

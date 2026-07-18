@@ -1,5 +1,12 @@
 import * as THREE from 'three'
-import { getZone, ZONES, ZONE_COUNT, type ZoneId } from '../../game/worldConfig'
+import {
+  getZone,
+  HOME_MEADOW_REVEAL_START,
+  ROUTE_END_PROGRESS,
+  ZONES,
+  ZONE_COUNT,
+  type ZoneId,
+} from '../../game/worldConfig'
 
 export type ZoneVisual = {
   id: ZoneId
@@ -285,6 +292,18 @@ export const ZONE_VISUALS: Record<ZoneId, ZoneVisual> = {
   },
 }
 
+/** A sunlit, grounded coda reached continuously from Storybook Harbor. */
+export const HOME_MEADOW_VISUAL: ZoneVisual = {
+  id: 'storybook',
+  skyTop: '#69b9ea', skyHorizon: '#ffe7b7', skyLow: '#a7dda0', fog: '#c5ddbd',
+  hemiSky: '#fff6d5', hemiGround: '#467a48', key: '#fff0a8', fill: '#b4f2df',
+  roadCenter: '#92b86a', roadEdge: '#5f9054', vineA: '#518454', vineB: '#93bd70',
+  glow: '#d8ffd0', rockTop: '#9eaa7c', rockBottom: '#637765', cap: '#8db66e',
+  foliageA: '#3f8a58', foliageB: '#9dca6f', accent: '#f18fa9', collectible: '#ffe078',
+  fogNear: 132, fogFar: 330, sunIntensity: 2.82, ambientIntensity: 0.66,
+  hemiIntensity: 1.08, fillIntensity: 0.82, rimIntensity: 0.63, accentIntensity: 2.15,
+}
+
 export type ZoneBlend = {
   from: ZoneVisual
   to: ZoneVisual
@@ -301,6 +320,16 @@ function smoothstep(value: number) {
 
 export function getZoneBlend(progress: number): ZoneBlend {
   const p = THREE.MathUtils.clamp(progress, 0, 0.999_999)
+  if (p >= HOME_MEADOW_REVEAL_START) {
+    return {
+      from: ZONE_VISUALS.storybook,
+      to: HOME_MEADOW_VISUAL,
+      amount: smoothstep(
+        (p - HOME_MEADOW_REVEAL_START) /
+          (ROUTE_END_PROGRESS - HOME_MEADOW_REVEAL_START),
+      ),
+    }
+  }
   for (let boundaryIndex = 1; boundaryIndex < ZONES.length; boundaryIndex += 1) {
     const boundary = ZONES[boundaryIndex].start
     if (p >= boundary - TRANSITION_HALF_WIDTH && p <= boundary + TRANSITION_HALF_WIDTH) {

@@ -80,6 +80,8 @@ There are no midpoint menus interrupting play. The world changes continuously as
 
 Each realm contains three discoveries, distinct landmarks, friendly obstacles, a colour story, a movement profile, and its own procedural sound palette: **36 learning moments in one continuous adventure**.
 
+The last discoveries resolve before Storybook Harbor’s visible hill crest. Mochi then rides a long, controllable homeward descent—roughly thirteen seconds at the default Adventure pace—while steering and acceleration remain available. The floating-world road blends through a flowered arch into a broad, sunlit green meadow; Mochi rests there for a beat before the learning recap appears. There is no teleport, fade-out, or menu interrupting her return home.
+
 ## Gentle by design
 
 - No game over, lives, timer, leaderboard, or lost progress

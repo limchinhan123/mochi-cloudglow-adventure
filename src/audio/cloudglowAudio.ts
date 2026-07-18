@@ -475,6 +475,19 @@ export class CloudglowAudioEngine {
     this.playTone(880, 0.18, 0.4, 0.075, 'sine')
   }
 
+  playHomecoming() {
+    // A warm major-sixth arrival: celebratory, gentle, and free of narration.
+    ;[
+      [523.25, 0, 0.72, 0.09],
+      [659.25, 0.11, 0.78, 0.085],
+      [783.99, 0.22, 0.86, 0.08],
+      [880, 0.34, 1.05, 0.075],
+      [1046.5, 0.48, 1.18, 0.065],
+    ].forEach(([frequency, delay, duration, volume], index) => {
+      this.playTone(frequency, delay, duration, volume, index % 2 ? 'triangle' : 'sine')
+    })
+  }
+
   dispose() {
     if (this.melodyTimer !== null) {
       window.clearTimeout(this.melodyTimer)
