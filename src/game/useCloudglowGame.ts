@@ -11,6 +11,10 @@ import type { SkyReachPose } from '../scene/SkyReachDirector'
 import {
   SHAPE_DEFINITIONS,
   BASE_JOURNEY_SECONDS,
+  HOME_MEADOW_LANDING_START,
+  HOME_MEADOW_REVEAL_START,
+  HOMEWARD_DESCENT_START,
+  ROUTE_END_PROGRESS,
   SPEED_MODES,
   ZONES,
   getZone,
@@ -35,7 +39,7 @@ import {
 
 export type { CloudglowLane, SpeedMode } from './worldConfig'
 
-export type CloudglowPhase = 'ready' | 'playing' | 'paused' | 'celebrating'
+export type CloudglowPhase = 'ready' | 'playing' | 'paused' | 'arriving' | 'celebrating'
 export type GuidanceTone = 'gentle' | 'hint' | 'celebrate'
 
 export interface CloudglowGuidance {
@@ -114,7 +118,6 @@ export interface CloudglowGame {
   noteActivity: () => void
 }
 
-const MAX_PROGRESS = 0.995
 const SPEED_MODE_KEY = 'cloudglow.speedMode.v1'
 const LEARNING_MODE_KEY = 'cloudglow.learningMode.v1'
 const JOURNEY_SAVE_KEY = 'cloudglow.journey.v2'
@@ -123,6 +126,7 @@ const OBSTACLE_SLOW_MS = 800
 const OBSTACLE_PROTECTION_MS = 1_500
 const ACCELERATION_FACTOR = 1.55
 const ACCELERATION_TAP_MS = 700
+const HOME_ARRIVAL_PAUSE_MS = 2_000
 
 function loadSpeedMode(): SpeedMode {
   if (typeof window === 'undefined') return 'adventure'
@@ -165,7 +169,7 @@ function loadJourneySave(): JourneySave | null {
       version: 2,
       learningMode: parsed.learningMode,
       runSeed: parsed.runSeed,
-      progress: Math.min(MAX_PROGRESS, Math.max(0, parsed.progress)),
+      progress: Math.min(ROUTE_END_PROGRESS, Math.max(0, parsed.progress)),
       completedChallengeIds: parsed.completedChallengeIds.filter(
         (id): id is string => typeof id === 'string',
       ),
@@ -230,11 +234,11 @@ function getPredictableEnvelope(
     }
   }
 
-  const finaleStart = mode === 'breeze' ? 0.96 : mode === 'adventure' ? 0.97 : 0.98
+  const finaleStart = HOME_MEADOW_LANDING_START
   if (progress > finaleStart) {
     const finale =
       1 -
-      Math.min(1, (progress - finaleStart) / (MAX_PROGRESS - finaleStart)) *
+      Math.min(1, (progress - finaleStart) / (ROUTE_END_PROGRESS - finaleStart)) *
         (1 - pace.finaleFloor)
     envelope = Math.min(envelope, finale)
   }
@@ -335,6 +339,9 @@ export function useCloudglowGame(
   const hintShownRef = useRef(false)
   const guidanceTimerRef = useRef<number | null>(null)
   const protectionTimerRef = useRef<number | null>(null)
+  const arrivalTimerRef = useRef<number | null>(null)
+  const descentCueShownRef = useRef(false)
+  const meadowCueShownRef = useRef(false)
   const currentZone = getZone(progress)
   const restingGuidanceRef = useRef(restingGuidance(currentZone))
   restingGuidanceRef.current = restingGuidance(currentZone)
@@ -482,7 +489,7 @@ export function useCloudglowGame(
   }, [finishAcceleration])
 
   const begin = useCallback(() => {
-    if (phase === 'celebrating') return
+    if (phase === 'arriving' || phase === 'celebrating') return
     lastActivityRef.current = Date.now()
     setIsInactivityHint(false)
     setGuidance(restingGuidance(currentZone))
@@ -495,7 +502,7 @@ export function useCloudglowGame(
       begin()
       return
     }
-    if (phase === 'celebrating') return
+    if (phase === 'arriving' || phase === 'celebrating') return
 
     if (phase === 'playing') {
       setPhase('paused')
@@ -515,6 +522,8 @@ export function useCloudglowGame(
     }
     progressRef.current = 0
     laneRef.current = 0
+    descentCueShownRef.current = false
+    meadowCueShownRef.current = false
     finishAcceleration()
     speedMultiplierRef.current =
       SPEED_MODES[speedMode].multiplier * SPEED_MODES[speedMode].launchFloor
@@ -526,6 +535,10 @@ export function useCloudglowGame(
     hintShownRef.current = false
 
     if (protectionTimerRef.current !== null) window.clearTimeout(protectionTimerRef.current)
+    if (arrivalTimerRef.current !== null) {
+      window.clearTimeout(arrivalTimerRef.current)
+      arrivalTimerRef.current = null
+    }
     audio.cancelNarration()
     shapeTrail.restartShapeTrail()
     setProgress(0)
@@ -622,7 +635,7 @@ export function useCloudglowGame(
     const nextRealm = ZONES[Math.min(completedRealmCount, ZONES.length - 1)]
     const checkpointProgress = Math.max(
       progressRef.current,
-      Math.min(MAX_PROGRESS, nextRealm.start + 0.0015),
+      Math.min(ROUTE_END_PROGRESS, nextRealm.start + 0.0015),
     )
     const save: JourneySave = {
       version: 2,
@@ -674,14 +687,14 @@ export function useCloudglowGame(
       const nextProgress = shapeTrail.routeHeldRef.current
         ? progressRef.current
         : Math.min(
-            MAX_PROGRESS,
+            ROUTE_END_PROGRESS,
             progressRef.current +
               (deltaSeconds / BASE_JOURNEY_SECONDS) * speedMultiplierRef.current,
           )
       progressRef.current = nextProgress
 
       const publishInterval = speedMode === 'comet' ? 40 : speedMode === 'adventure' ? 55 : 75
-      if (now - lastPublished >= publishInterval || nextProgress >= MAX_PROGRESS) {
+      if (now - lastPublished >= publishInterval || nextProgress >= ROUTE_END_PROGRESS) {
         setProgress(nextProgress)
         lastPublished = now
       }
@@ -691,11 +704,29 @@ export function useCloudglowGame(
         lastSpeedPublished = now
       }
 
-      if (nextProgress >= MAX_PROGRESS) {
-        setPhase('celebrating')
+      if (!descentCueShownRef.current && nextProgress >= HOMEWARD_DESCENT_START) {
+        descentCueShownRef.current = true
+        showGuidance(
+          { icon: 'wing', text: 'Down the home hill — wheee!', tone: 'gentle' },
+          2_500,
+        )
+      }
+      if (!meadowCueShownRef.current && nextProgress >= HOME_MEADOW_REVEAL_START) {
+        meadowCueShownRef.current = true
+        showGuidance(
+          { icon: 'flower', text: 'The green meadow is just ahead!', tone: 'celebrate' },
+          2_700,
+        )
+      }
+
+      if (nextProgress >= ROUTE_END_PROGRESS) {
+        finishAcceleration()
+        audio.cancelNarration()
+        audio.playHomecoming()
+        setPhase('arriving')
         setIsInactivityHint(false)
         showGuidance(
-          { icon: 'flower', text: 'All twelve learning realms are glowing!', tone: 'celebrate' },
+          { icon: 'flower', text: 'Mochi is home in the green meadow!', tone: 'celebrate' },
           0,
         )
         try {
@@ -704,6 +735,10 @@ export function useCloudglowGame(
           // Storage is optional.
         }
         setResumeAvailable(false)
+        arrivalTimerRef.current = window.setTimeout(() => {
+          arrivalTimerRef.current = null
+          setPhase('celebrating')
+        }, HOME_ARRIVAL_PAUSE_MS)
         return
       }
 
@@ -712,7 +747,7 @@ export function useCloudglowGame(
 
     animationFrame = window.requestAnimationFrame(advance)
     return () => window.cancelAnimationFrame(animationFrame)
-  }, [phase, shapeTrail.challenges, shapeTrail.completedChallengeIdsRef, shapeTrail.paceFactorRef, shapeTrail.routeHeldRef, shapeTrail.tick, showGuidance, skyReachPoseRef, speedMode])
+  }, [audio.cancelNarration, audio.playHomecoming, finishAcceleration, phase, shapeTrail.challenges, shapeTrail.completedChallengeIdsRef, shapeTrail.paceFactorRef, shapeTrail.routeHeldRef, shapeTrail.tick, showGuidance, skyReachPoseRef, speedMode])
 
   useEffect(() => {
     if (phase !== 'playing') finishAcceleration()
@@ -803,6 +838,7 @@ export function useCloudglowGame(
       if (guidanceTimerRef.current !== null) window.clearTimeout(guidanceTimerRef.current)
       if (protectionTimerRef.current !== null) window.clearTimeout(protectionTimerRef.current)
       if (accelerationStopTimerRef.current !== null) window.clearTimeout(accelerationStopTimerRef.current)
+      if (arrivalTimerRef.current !== null) window.clearTimeout(arrivalTimerRef.current)
     },
     [],
   )

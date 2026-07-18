@@ -1,11 +1,11 @@
 import * as THREE from 'three'
 import { WORLD_COLLECTIBLES } from '../game/learningCurriculum'
-import { ZONE_COUNT } from '../game/worldConfig'
+import { ROUTE_END_PROGRESS, ZONES, ZONE_COUNT } from '../game/worldConfig'
 
 /**
- * One continuous, arc-length sampled climb through all twelve realms. Each realm
- * is deliberately similar in physical length so the authoritative worldConfig
- * boundaries line up with authored landmarks without speed discontinuities.
+ * One continuous, arc-length sampled journey through all twelve realms. Explicit
+ * realm-to-curve bounds keep worldConfig gates aligned while the final realm owns
+ * extra physical distance for its authored downhill.
  */
 const ROUTE_POINTS = [
   // Cloudglow Garden — a gentle rising garden path.
@@ -97,13 +97,15 @@ const ROUTE_POINTS = [
   new THREE.Vector3(7.4, 230, -1162),
   new THREE.Vector3(-9.2, 238, -1180),
 
-  // Storybook Harbor — a warm final glide toward the great open book.
+  // Storybook Harbor — crest the great open book, then ride one long greenward descent.
   new THREE.Vector3(-15.1, 241, -1198),
-  new THREE.Vector3(-7.2, 238, -1216),
-  new THREE.Vector3(8, 232, -1234),
-  new THREE.Vector3(15.2, 226, -1252),
-  new THREE.Vector3(6.8, 223, -1270),
-  new THREE.Vector3(-7.6, 226, -1288),
+  new THREE.Vector3(-7.2, 246, -1216),
+  new THREE.Vector3(8, 243, -1234),
+  new THREE.Vector3(15.2, 230, -1252),
+  new THREE.Vector3(11, 198, -1274),
+  new THREE.Vector3(4.5, 160, -1298),
+  new THREE.Vector3(-4.5, 136, -1324),
+  new THREE.Vector3(-9, 132, -1352),
 ] as const
 
 export const CLOUDLIFT_ROUTE = new THREE.CatmullRomCurve3(
@@ -118,26 +120,77 @@ export const LANE_WIDTH = 2.15
 /** Four independently culled road chunks per realm. */
 export const ROUTE_CHUNK_COUNT = ZONE_COUNT * 4
 
+/**
+ * The first eleven realms each span six curve segments. Storybook Harbor owns
+ * the remaining segments so its longer downhill does not shift any realm gate.
+ */
+const CURVE_SAMPLES_PER_SEGMENT = 32
+const curveSegmentCount = ROUTE_POINTS.length - 1
+const curveLengths = CLOUDLIFT_ROUTE.getLengths(
+  curveSegmentCount * CURVE_SAMPLES_PER_SEGMENT,
+)
+const curveTotalLength = curveLengths[curveLengths.length - 1]
+const realmCurveBounds = Array.from({ length: ZONE_COUNT + 1 }, (_, index) => {
+  const controlPointIndex = index === ZONE_COUNT ? curveSegmentCount : index * 6
+  const sampleIndex = controlPointIndex * CURVE_SAMPLES_PER_SEGMENT
+  return curveLengths[sampleIndex] / curveTotalLength
+})
+
 const UP = new THREE.Vector3(0, 1, 0)
 const scratchTangent = new THREE.Vector3()
 const scratchRight = new THREE.Vector3()
 
+export function routeProgressToCurveU(progress: number) {
+  const p = THREE.MathUtils.clamp(progress, 0, ROUTE_END_PROGRESS)
+  const realmIndex = Math.min(
+    ZONE_COUNT - 1,
+    Math.floor(p * ZONE_COUNT),
+  )
+  const realm = ZONES[realmIndex]
+  const progressEnd = realmIndex === ZONE_COUNT - 1
+    ? ROUTE_END_PROGRESS
+    : realm.end
+  const localProgress = THREE.MathUtils.clamp(
+    (p - realm.start) / (progressEnd - realm.start),
+    0,
+    1,
+  )
+  return THREE.MathUtils.lerp(
+    realmCurveBounds[realmIndex],
+    realmCurveBounds[realmIndex + 1],
+    localProgress,
+  )
+}
+
 export function sampleRoute(progress: number, lane = 0, target = new THREE.Vector3()) {
-  const t = THREE.MathUtils.clamp(progress, 0, 0.995)
-  CLOUDLIFT_ROUTE.getPointAt(t, target)
-  CLOUDLIFT_ROUTE.getTangentAt(t, scratchTangent).normalize()
+  const curveU = routeProgressToCurveU(progress)
+  CLOUDLIFT_ROUTE.getPointAt(curveU, target)
+  CLOUDLIFT_ROUTE.getTangentAt(curveU, scratchTangent).normalize()
   scratchRight.crossVectors(scratchTangent, UP).normalize()
   target.addScaledVector(scratchRight, lane * LANE_WIDTH)
   return target
 }
 
 export function sampleRouteFrame(progress: number) {
-  const t = THREE.MathUtils.clamp(progress, 0, 0.995)
-  const position = CLOUDLIFT_ROUTE.getPointAt(t)
-  const tangent = CLOUDLIFT_ROUTE.getTangentAt(t).normalize()
+  const curveU = routeProgressToCurveU(progress)
+  const position = CLOUDLIFT_ROUTE.getPointAt(curveU)
+  const tangent = CLOUDLIFT_ROUTE.getTangentAt(curveU).normalize()
   const right = new THREE.Vector3().crossVectors(tangent, UP).normalize()
   const up = new THREE.Vector3().crossVectors(right, tangent).normalize()
   return { position, tangent, right, up }
+}
+
+export function sampleRouteAhead(
+  progress: number,
+  worldUnits: number,
+  target = new THREE.Vector3(),
+) {
+  const curveU = THREE.MathUtils.clamp(
+    routeProgressToCurveU(progress) + worldUnits / ROUTE_LENGTH,
+    0,
+    1,
+  )
+  return CLOUDLIFT_ROUTE.getPointAt(curveU, target)
 }
 
 /** Compatibility alias. worldConfig remains the locked source of truth. */

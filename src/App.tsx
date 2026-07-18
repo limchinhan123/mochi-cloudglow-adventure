@@ -2,7 +2,14 @@ import { Canvas } from '@react-three/fiber'
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useCloudglowGame } from './game/useCloudglowGame'
-import { ZONES, getZone } from './game/worldConfig'
+import {
+  HOME_MEADOW_LANDING_START,
+  HOME_MEADOW_REVEAL_START,
+  HOMEWARD_DESCENT_START,
+  ROUTE_END_PROGRESS,
+  ZONES,
+  getZone,
+} from './game/worldConfig'
 import CloudglowWorld from './scene/CloudglowWorld'
 import { CinematicCamera } from './scene/CinematicCamera'
 import { CloudglowEffects } from './scene/CloudglowEffects'
@@ -141,6 +148,16 @@ export default function App() {
   useEffect(() => {
     window.__CLOUDGLOW_DEBUG__ = {
       get snapshot() {
+        const currentProgress = game.progressRef.current
+        const homewardStage: CloudglowDebugSnapshot['homewardStage'] = currentProgress >= ROUTE_END_PROGRESS
+          ? 'home'
+          : currentProgress >= HOME_MEADOW_LANDING_START
+            ? 'landing'
+            : currentProgress >= HOME_MEADOW_REVEAL_START
+              ? 'meadow-in-sight'
+              : currentProgress >= HOMEWARD_DESCENT_START
+                ? 'descending'
+                : 'journey'
         return {
           phase: game.phase,
           progress: game.progressRef.current,
@@ -163,6 +180,7 @@ export default function App() {
             ? `${game.shapeTrail.activeChallenge.left} ${game.shapeTrail.activeChallenge.operator} ${game.shapeTrail.activeChallenge.right}`
             : null,
           skyReachBusy,
+          homewardStage,
         }
       },
     }

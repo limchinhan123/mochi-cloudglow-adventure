@@ -20,9 +20,10 @@ The game is not accepted merely because it builds or runs. Every release must pr
 - Candy Cloud Carnival reads as a bright carousel world with distinct confectionery architecture.
 - Melody Mountain makes musical forms, rhythm and movement visible in the environment.
 - Bubble Planet Spaceport uses playful low-gravity forms, planets, rockets and bubble-like materials.
-- Storybook Harbor closes the journey with warm paper, page, harbour and storybook motifs.
+- Storybook Harbor resolves its three learning discoveries before a visible crest, using warm paper, page, harbour and storybook motifs.
+- The final route includes a long authored downhill, an unmistakable green-land reveal and a grounded Home Meadow landing.
 - Transitions remain continuous. No realm may read as a flat background or palette swap.
-- The finale remains authored, readable and luminous through progress `0.995`.
+- The finale remains authored, readable and luminous through progress `0.995`; it may not teleport, fade out or loop back to the sky.
 
 ## Composition and camera
 
@@ -30,6 +31,7 @@ The game is not accepted merely because it builds or runs. Every release must pr
 - Normal journey framing keeps Mochi inside a soft horizontal safe band of roughly `42–58%` of screen width.
 - Small camera drift is welcome; edge clipping and rigid centre-locking are not.
 - Curve anticipation uses physical world distance so route extensions cannot multiply the look-ahead unexpectedly.
+- Downhill framing preserves a stable world horizon while still making the changing slope and meadow below legible.
 - Mochi's head remains readable above the lower controls and her body anchors the lower frame.
 - The living road fills the near frame while preserving enough horizon to preview choices and landmarks.
 - Learning prompts remain compact, high and central without obscuring Mochi or the three answer paths.
@@ -77,6 +79,7 @@ The game is not accepted merely because it builds or runs. Every release must pr
 
 - Soft Breeze, Adventure and Comet remain meaningfully different, smooth and predictable.
 - Holding accelerate creates a temporary burst without changing the selected base speed.
+- Steering and acceleration remain available from the Storybook crest through the Home Meadow approach.
 - At least two lanes remain safe around every friendly obstacle.
 - Contact creates a soft poof and short slowdown only: no loss, red flash, harsh buzzer, camera shake or restart.
 - There is no timer, leaderboard, life counter, score penalty or game-over state.
@@ -84,6 +87,7 @@ The game is not accepted merely because it builds or runs. Every release must pr
 - Narration is captioned and music ducks beneath spoken learning feedback.
 - Progress and parent-selected settings resume locally without requiring an account or child profile.
 - Mobile-landscape controls remain large, reachable and clear at `667 × 375` and above.
+- The grounded arrival remains visible for approximately two seconds before the recap covers the scene.
 
 ## Public-repository safety gate
 
@@ -103,4 +107,5 @@ The game is not accepted merely because it builds or runs. Every release must pr
 - Random speed changes, punitive obstacles or spoken wrong-answer feedback
 - Fixed question order or fixed correct-answer lanes across every journey
 - Midpoint menus that break the continuous twelve-realm trip
+- An abrupt road cutoff, floating final island, fade, teleport or recap that hides the Home Meadow landing
 - Mobile optimisation that removes essential scene identity or learning controls

@@ -10,6 +10,7 @@ interface CloudglowDebugSnapshot {
   isAccelerating: boolean
   obstacleProtected: boolean
   guidance: string
+  homewardStage: 'journey' | 'descending' | 'meadow-in-sight' | 'landing' | 'home'
 }
 
 interface Window {

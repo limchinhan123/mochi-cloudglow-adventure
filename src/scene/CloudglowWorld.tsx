@@ -7,7 +7,6 @@ import {
   type ZoneId,
 } from '../game/worldConfig'
 import {
-  CLOUDLIFT_ROUTE,
   LANE_WIDTH,
   ROUTE_CHUNK_COUNT,
   sampleRouteFrame,
@@ -334,7 +333,7 @@ function routeSurfacePoint(t: number, lateral: number, lift = 0) {
     (Math.sin(clamped * 108 + lateral * 3.1) * 0.12 +
       Math.sin(clamped * 41 - lateral) * 0.07)
   const crown = (1 - lateral * lateral) * 0.17
-  return CLOUDLIFT_ROUTE.getPointAt(clamped)
+  return frame.position.clone()
     .addScaledVector(frame.right, lateral * (roadHalfWidth(clamped) + edgeRuffle))
     .addScaledVector(frame.up, crown + lift)
 }
@@ -1601,7 +1600,6 @@ export default function CloudglowWorld({
       makeIslandSpec(0.84, 1, 27, -3.4, 11.1, 20, 0.74, 146, true),
       makeIslandSpec(0.9, -1, 20, 2.6, 8.1, 15, 0.84, 151),
       makeIslandSpec(0.945, -1, 25, -1.5, 10.1, 19, 0.78, 156),
-      makeIslandSpec(0.985, 1, 29, 4.2, 12.8, 23, 0.76, 161, true),
     ],
     [],
   )

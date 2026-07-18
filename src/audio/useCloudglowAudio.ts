@@ -80,6 +80,7 @@ export interface CloudglowAudioApi {
   playLaneSwish: (direction: -1 | 1) => void
   playPuff: () => void
   playBounce: () => void
+  playHomecoming: () => void
 }
 
 export function useCloudglowAudio(): CloudglowAudioApi {
@@ -251,6 +252,7 @@ export function useCloudglowAudio(): CloudglowAudioApi {
   }, [])
   const playPuff = useCallback(() => engineRef.current?.playPuff(), [])
   const playBounce = useCallback(() => engineRef.current?.playBounce(), [])
+  const playHomecoming = useCallback(() => engineRef.current?.playHomecoming(), [])
 
   useEffect(() => {
     engineRef.current?.setSettings(settings)
@@ -289,5 +291,6 @@ export function useCloudglowAudio(): CloudglowAudioApi {
     playLaneSwish,
     playPuff,
     playBounce,
+    playHomecoming,
   }
 }

@@ -1,7 +1,7 @@
 import { useFrame, useThree } from '@react-three/fiber'
 import { useMemo, useRef } from 'react'
 import * as THREE from 'three'
-import { CLOUDLIFT_ROUTE, ROUTE_CHUNK_COUNT, sampleRouteFrame } from './route'
+import { ROUTE_CHUNK_COUNT, sampleRouteFrame } from './route'
 import { QUALITY } from './theme'
 import { blendColor, blendNumber, getZoneBlend } from './zones/zoneVisuals'
 
@@ -13,7 +13,7 @@ type CloudglowLightingProps = {
 const ROUTE_LOOKUP_SEGMENTS = ROUTE_CHUNK_COUNT * 8
 const ROUTE_LOOKUP = Array.from({ length: ROUTE_LOOKUP_SEGMENTS + 1 }, (_, index) => ({
   progress: index / ROUTE_LOOKUP_SEGMENTS,
-  point: CLOUDLIFT_ROUTE.getPointAt(index / ROUTE_LOOKUP_SEGMENTS),
+  point: sampleRouteFrame(index / ROUTE_LOOKUP_SEGMENTS).position,
 }))
 
 function nearestRouteProgress(position: THREE.Vector3) {

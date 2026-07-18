@@ -1,8 +1,9 @@
 import { useFrame } from '@react-three/fiber'
 import { useLayoutEffect, useMemo, useRef, type RefObject } from 'react'
 import * as THREE from 'three'
-import { ZONES, type ZoneId } from '../../game/worldConfig'
+import { HOME_MEADOW_REVEAL_START, ZONES, type ZoneId } from '../../game/worldConfig'
 import { sampleRouteFrame } from '../route'
+import { HomeMeadowFinale } from './HomeMeadowFinale'
 import { ZONE_VISUALS } from './zoneVisuals'
 
 type Vec3 = [number, number, number]
@@ -31,7 +32,7 @@ const LANDMARK_AT = {
   carnival: zoneProgress('carnival', 0.53),
   melody: zoneProgress('melody', 0.54),
   spaceport: zoneProgress('spaceport', 0.53),
-  storybook: zoneProgress('storybook', 0.56),
+  storybook: zoneProgress('storybook', 0.33),
 } as const
 
 const LANDMARK_VISIBLE_RADIUS = 0.047
@@ -1318,6 +1319,9 @@ function TransitionCrown({
 export function ZoneLandmarks({ progress, paused }: { progress: number; paused?: boolean }) {
   return (
     <group>
+      {progress >= HOME_MEADOW_REVEAL_START && (
+        <HomeMeadowFinale progress={progress} paused={paused} />
+      )}
       {Math.abs(progress - LANDMARK_AT.garden) < LANDMARK_VISIBLE_RADIUS && <GardenBloomGate paused={paused} />}
       {Math.abs(progress - LANDMARK_AT.citadel) < LANDMARK_VISIBLE_RADIUS && <StarwindCitadel paused={paused} />}
       {Math.abs(progress - LANDMARK_AT.reef) < LANDMARK_VISIBLE_RADIUS && <LanternReef paused={paused} />}
