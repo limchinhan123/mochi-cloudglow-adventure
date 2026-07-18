@@ -1,79 +1,106 @@
-# Six Sky Realms acceptance contract
+# Twelve-realm visual and child-learning acceptance contract
 
-The approved references are:
+The approved visual references are:
 
-- `reference/cloudglow-gameplay-reference.png` — composition, environment and lighting contract (`1672 × 941`)
-- `reference/mochi-character-reference.png` — face, proportions and material contract (`1024 × 1536`)
+- `reference/cloudglow-gameplay-reference.png` — composition, environment and lighting direction
+- `reference/mochi-character-reference.png` — face, proportions and material direction
 
-The game is not accepted merely because it builds or runs.
+The game is not accepted merely because it builds or runs. Every release must preserve the complete journey, child-safe interaction model and authored visual quality described below.
 
-## Six-realm world
+## Twelve continuous realms
 
 - Cloudglow Garden is open, warm, botanical and visibly cultivated.
 - Starwind Citadel uses pearl cloudstone, cool tower silhouettes, stars and aerial architecture.
-- Lantern Reef reads unmistakably underwater through caustic color, coral, bubbles and jelly forms.
-- Moonvine Wilds is wet, indigo, dense and bioluminescent while retaining readable road and foliage midtones.
-- Sunbeam Prism Desert is warm and luminous, with sculpted peach-gold dune mesas, crystal cactus silhouettes, rainbow motes and a legible sun gate. It may not read as an empty tan sky.
-- Clockwork Toy Town uses painted blocks, felt pennants, brass gears, cream/candy-red/sky-blue towers, a moving toy train and a clockflower music-box finale. It may not read as ordinary castle architecture with a new palette.
-- Transitions are continuous; no realm may read as a flat background swap.
-- The finale remains visually authored and luminous through progress `0.995`.
+- Lantern Reef reads unmistakably underwater through caustic colour, coral, bubbles and jelly forms.
+- Moonvine Wilds is wet, indigo, dense and bioluminescent while keeping the road and foliage readable.
+- Sunbeam Prism Desert is warm and luminous, with sculpted peach-gold mesas, crystals and rainbow motes.
+- Clockwork Toy Town uses painted blocks, felt pennants, brass gears and moving toy forms.
+- Aurora Snowglobe feels crystalline, snowy and luminous rather than like a blue recolour.
+- Dinosaur Fern Valley uses friendly prehistoric scale, fossils and dense fern silhouettes without becoming frightening.
+- Candy Cloud Carnival reads as a bright carousel world with distinct confectionery architecture.
+- Melody Mountain makes musical forms, rhythm and movement visible in the environment.
+- Bubble Planet Spaceport uses playful low-gravity forms, planets, rockets and bubble-like materials.
+- Storybook Harbor closes the journey with warm paper, page, harbour and storybook motifs.
+- Transitions remain continuous. No realm may read as a flat background or palette swap.
+- The finale remains authored, readable and luminous through progress `0.995`.
 
-## Composition
+## Composition and camera
 
-- Landscape chase camera uses a stable horizon and `52–55°` vertical field of view.
-- Mochi's head sits near the horizontal centre and around 55–61% down the frame.
-- Her body occupies roughly 27–34% of the lower frame width.
-- The living road fills at least 60% of the near-frame width.
-- The left third is materially darker than the right; peach sky occupies at least 25% of the frame.
-- UI remains low and lateral; the Shape Trail prompt remains compact, high and central without obscuring Mochi or answer choices.
+- Landscape chase camera uses a stable horizon and approximately `52–55°` vertical field of view.
+- Normal journey framing keeps Mochi inside a soft horizontal safe band of roughly `42–58%` of screen width.
+- Small camera drift is welcome; edge clipping and rigid centre-locking are not.
+- Curve anticipation uses physical world distance so route extensions cannot multiply the look-ahead unexpectedly.
+- Mochi's head remains readable above the lower controls and her body anchors the lower frame.
+- The living road fills the near frame while preserving enough horizon to preview choices and landmarks.
+- Learning prompts remain compact, high and central without obscuring Mochi or the three answer paths.
+- Camera roll stays below two degrees during normal travel.
 
-## Character
+## Character and natural movement
 
-- One continuous body silhouette; no visible ball or capsule chain.
+- Mochi retains one continuous chubby body silhouette with no visible ball or capsule chain.
 - Broad snout, plum eyes, catchlights, pale belly and soft rose material remain visible at gameplay scale.
-- No head/body seam, plastic gloss, metallic scales or thin noodle proportions.
+- Her follow-the-leader spine carries the path taken by the head naturally toward the tail.
+- Lane changes propagate backward instead of translating the whole body at once.
+- Compression and stretch waves preserve volume and never resemble an exaggerated earthworm bulge.
+- Garden, aerial, swimming, jungle, snow, dinosaur, carnival, musical, space and storybook motion profiles remain visibly distinct.
+- Her head stays stable enough for facial expression and eye direction to remain readable.
+- Cloud Bounce and Sky Reach have an authored coil, tall rise of approximately five world units, short hold, controlled descent and soft landing.
+- Sky Reach may not translate the route root, skate the tail or leave a body kink after landing.
 
-## Environment
+## Environment and lighting
 
-- At least three obvious physical depth layers.
-- Living road has a leaf deck, braided edge roots and visible underside structure.
-- Islands have real undersides and authored silhouettes.
-- Waterfalls visibly originate from terrain and include mist.
-- Foreground leaves have thickness and backlighting.
-- Shape choices are readable layered 3D geometry rather than bloom sprites, remain equally attractive before selection and never reveal the correct path through brightness alone.
+- Every realm contains at least three obvious physical depth layers.
+- Roads have an authored deck, edge treatment and visible underside structure where exposed.
+- Floating islands have readable top surfaces, detailed sides and real undersides; no island may become a flat black block.
+- Waterfalls visibly originate from terrain and include mist or spray.
+- Foreground plants and architectural forms have thickness, shading and readable silhouettes.
+- Petrol teal, rose Mochi, gold learning objects and each realm's accent palette remain distinct.
+- No crushed foliage shadows, global neon bloom, motion blur or continuous camera bob.
+- Mobile optimisation may reduce effects, but not remove the core world silhouette or lighting direction.
 
-## Lighting and motion
+## Learning journey
 
-- Petrol-teal jungle, moss route, restrained cyan magic, rose Mochi, gold rewards and peach sky remain distinct.
-- No global bloom, crushed foliage shadows, motion blur or continuous camera bob.
-- Camera roll stays below two degrees.
-- A lane change is visible within 120 ms and settles in 350–450 ms.
-- Mochi's body carries a tailward wave tied to distance travelled; lane changes propagate toward the tail.
-- Compression remains subtle enough to preserve volume and never reads as an earthworm bulge.
-- Her head stays stable while garden, aerial, swimming and jungle motion profiles remain visibly distinct.
-- Sky Reach has a visibly authored coil, tall rise, short hold, controlled descent and soft landing. Its maximum lift is approximately `4.2` world units without route-root translation, tail skating or a body kink.
+- Twelve realms contain three discoveries each: `36` successful learning moments in one smooth journey.
+- Shape Trail, Math Quest and Surprise Mix are all fully playable from beginning to finale.
+- Shape Trail includes familiar, advanced and explorer tiers across `25` 2D and 3D shapes.
+- Math Quest uses addition and subtraction only, with every answer between `0` and `10`.
+- Surprise Mix distributes shapes and maths across all twelve realms using balanced rotating patterns; neither subject is permanently backloaded.
+- Targets, distractors, maths values and answer-lane positions are regenerated for each fresh journey.
+- The three paths remain equally attractive before selection and never reveal the correct answer through brightness alone.
+- One elevated third challenge per realm remains generously reachable through Cloud Bounce or Sky Reach.
+- A wrong choice pauses gently with a visual retry and no speech, penalty, disappearing answer or forced auto-steer.
+- Optional assistance appears only after the child has had time to explore independently.
+- Correct choices speak only the collected shape or answer name when answer naming is enabled.
+- Completion recaps successful discoveries and never displays wrong attempts as failures.
 
-## Child-facing gameplay
+## Child-safe play
 
-- Soft Breeze, Adventure and Comet pace choices ease smoothly and remain predictable.
-- One obstacle may occupy a lane; two lanes always remain safe.
-- Contact creates a soft poof and short slowdown only. No loss, red flash, harsh buzzer, camera shake or restart demand.
-- Every realm contains three Shape Trail challenges and uses the left, centre and right lanes as the correct answer exactly once per run.
-- Prompts are screen-only. Wrong choices pause gently with a visual retry and no speech, penalty, disappearing answer or forced auto-steer.
-- Correct choices speak only the exact shape name when story voice is enabled, then briefly show one concise visual fact.
-- The curriculum includes foundation and stretch shapes: circle, triangle, square, rectangle, oval, diamond, star, heart, semicircle, pentagon, hexagon, octagon, trapezium and parallelogram.
-- One elevated challenge per realm remains generously reachable through Sky Reach and magnetic capture; it may not require preschool-perfect timing.
-- Completion recaps all 18 successful challenge glyphs across six realms and never displays wrong attempts.
+- Soft Breeze, Adventure and Comet remain meaningfully different, smooth and predictable.
+- Holding accelerate creates a temporary burst without changing the selected base speed.
+- At least two lanes remain safe around every friendly obstacle.
+- Contact creates a soft poof and short slowdown only: no loss, red flash, harsh buzzer, camera shake or restart.
+- There is no timer, leaderboard, life counter, score penalty or game-over state.
 - Story voice, world sounds and music can be controlled independently.
-- Narration is captioned and ducks the music rather than competing with it.
+- Narration is captioned and music ducks beneath spoken learning feedback.
+- Progress and parent-selected settings resume locally without requiring an account or child profile.
 - Mobile-landscape controls remain large, reachable and clear at `667 × 375` and above.
+
+## Public-repository safety gate
+
+- `.env`, `.env.*`, `.vercel`, `.private`, dependency folders and generated build output remain ignored.
+- No API key, authentication token, password, private key, child photo or private family asset may be committed.
+- README screenshots must come from the live game and contain no browser chrome, account information or personal identifiers.
+- Production dependencies must pass `npm audit --omit=dev` before a public release.
 
 ## Automatic rejection
 
-- Flat reference art used as the playable background.
-- Smooth green tube used as the finished road.
-- Primitive sphere/capsule snake silhouette.
-- Empty sky standing in for the island composition.
-- Uniform foliage scatter, obvious waterfall planes, global neon glow or placeholder UI.
-- Mobile optimization that removes the core scene silhouette or lighting direction.
-- A realm distinguished only by palette, an empty finale, random speed changes, punitive obstacles, spoken instructions, narrated wrong answers or overlapping narration.
+- Flat reference art used as the playable background
+- Smooth undecorated tube used as the finished road
+- Primitive sphere or capsule snake silhouette
+- Empty sky standing in for authored island composition
+- A realm distinguished only by palette
+- Flat black islands, placeholder geometry or unreadable crushed shadows
+- Random speed changes, punitive obstacles or spoken wrong-answer feedback
+- Fixed question order or fixed correct-answer lanes across every journey
+- Midpoint menus that break the continuous twelve-realm trip
+- Mobile optimisation that removes essential scene identity or learning controls
