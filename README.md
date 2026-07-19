@@ -4,6 +4,8 @@
 
 ### A cinematic 3D snake-coaster where early learners steer through shapes, small maths, and twelve magical worlds.
 
+https://mochi-cloudglow-adventure.vercel.app/
+
 [![Play the live game](https://img.shields.io/badge/PLAY_THE_LIVE_GAME-2f766d?style=for-the-badge&logo=vercel&logoColor=white)](https://mochi-cloudglow-adventure.vercel.app/)
 
 ![Three.js](https://img.shields.io/badge/3D-Three.js-111111?logo=threedotjs&logoColor=white)
